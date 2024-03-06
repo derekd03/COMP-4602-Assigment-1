@@ -1,0 +1,47 @@
+@model Assignment1.Models.Reservation
+@using Assignment1.Models
+@inject Assignment1.Data.ApplicationDbContext _context
+
+@{
+    ViewData["Title"] = "Current";
+}
+
+@{
+    // Retrieve the book details based on the book code number
+    var book = _context.Book.FirstOrDefault(b => b.CodeNumber == Model.BookCodeNumber);
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Reservation</h4>
+    <hr />
+    <p>Current Reservation:</p>
+    @if (book != null)
+    {
+        <p>Book Title: @book.Title</p>
+        <p>Book Author: @book.Author</p>
+        <p>Book Year: @book.YearPublished</p>
+    }
+    else
+    {
+        <p>Book details not found</p>
+    }
+    <p>Reservation Date: @Model.ReservationDate.ToShortDateString()</p>
+    <p>Estimated Delivery Date: @Model.EstimatedDeliveryDate.ToShortDateString()</p>
+    <p>Return Date: @Model.ReturnDate.ToShortDateString()</p>
+
+    @if (Model.ReturnDate < DateTime.Now)
+    {
+        <p>Book is overdue</p>
+    }
+    else
+    {
+        <p>Book is not overdue</p>
+    }
+    <P>Fees: $@Model.Fees</p>
+    <p>You can e-transfer existing fees, and voice any concerns to contact@zenith.org</p>
+    <p>@Model.AdminComment</p>
+    <a href="/Reservation/Return?id=@Model.Id" class="btn btn-primary">Already Returned?</a>
+    <p>(Simulate returning the book)</p>
+</div>

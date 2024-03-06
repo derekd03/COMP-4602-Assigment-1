@@ -1,0 +1,12 @@
+@model Assignment1.Models.Reservation
+@{
+    ViewData["Title"] = "Return";
+}
+
+<h2>Are you sure you want to return this book?</h2>
+<br>
+
+<form method="post" asp-action="Return">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-primary">Return Book</button>
+</form>

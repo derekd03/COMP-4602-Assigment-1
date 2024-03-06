@@ -1,0 +1,55 @@
+@model Assignment1.Models.Reservation
+@inject Assignment1.Data.ApplicationDbContext _context
+@{
+    ViewData["Title"] = "Confirmation";
+}
+
+<h1>Create</h1>
+
+<h4>Reservation</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Confirmation" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ReserverId" />
+            <input type="hidden" asp-for="BookCodeNumber" />
+            <input type="hidden" asp-for="ReservationDate" />
+            <input type="hidden" asp-for="EstimatedDeliveryDate" />
+            <input type="hidden" asp-for="ReturnDate" />
+            <input type="hidden" asp-for="Fees" />
+            <input type="hidden" asp-for="AdminComment" />
+            <p>Confirm reservation details:</p>
+            @{
+                var book = _context.Book.FirstOrDefault(b => b.CodeNumber == Model.BookCodeNumber);
+            }
+            @if (book != null)
+            {
+                <p>Book Title: @book.Title</p>
+                <p>Book Author: @book.Author</p>
+                <p>Book Year: @book.YearPublished</p>
+            }
+            else
+            {
+                <p>Book details not found</p>
+            }
+            <p>Reservation Date: @Model.ReservationDate.ToShortDateString()</p>
+            <p>Estimated Delivery Date: @Model.EstimatedDeliveryDate.ToShortDateString()</p>
+            <p>Return Date: @Model.ReturnDate.ToShortDateString()</p>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Confirm Reservation</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

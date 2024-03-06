@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Assignment1.Models.Book>
+@inject Assignment1.Data.ApplicationDbContext _context
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Home Page";
+
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    // Get user's reservation
+    var userReservation = _context.Reservation
+    .FirstOrDefault(r => r.ReserverId == userId);
+
+    // Check if the current user has any reservation at all
+    var userHasReservation = userReservation != null;
+
+    // Overdue notice if the user has an overdue book
+    if (userHasReservation && userReservation?.ReturnDate < DateTime.Now)
+    {
+        <script>
+            alert("FROM: ZENITH LIBRARY\n\n" +
+                "TO: @User.Identity?.Name\n\n" +
+                "SUBJECT: Overdue Book\n\n" +
+                "MESSAGE: You have an overdue book. Please return it as soon as possible.");
+        </script>
+    }
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to the Zenith Library</h1>
+    <p>By: Derek D'Souza - A01266791</p>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Year Published</th>
+                        <th>Quantity</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var book in Model)
+                    {
+                        <tr>
+                            <td>@book.Title</td>
+                            <td>@book.Author</td>
+                            <td>@book.YearPublished</td>
+                            <td>@book.Quantity</td>
+                            <td>
+                                <!-- Button to reserve -->
+                                @if (User.Identity.IsAuthenticated && !userHasReservation && book.Quantity > 0)
+                                {
+                                    <a href="/Reservation/Confirmation?bookCodeNumber=@book.CodeNumber"
+                                        class="btn btn-primary">Reserve</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
